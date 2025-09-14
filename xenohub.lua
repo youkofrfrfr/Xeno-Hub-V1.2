@@ -116,24 +116,10 @@ end)
 local function loadOrion()
 	info.Text = "Loading Orion Hub..."
 	
-	-- Load a working version of Orion Library
+	-- Load the Orion Library from your provided source
 	local success, OrionLib = pcall(function()
-		return loadstring(game:HttpGet("https://raw.githubusercontent.com/richie0866/orion/main/lib"))()
+		return loadstring(game:HttpGet(('https://raw.githubusercontent.com/jensonhirst/Orion/main/source')))()
 	end)
-	
-	if not success then
-		-- Fallback to another working version
-		success, OrionLib = pcall(function()
-			return loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Orion/main/source"))()
-		end)
-	end
-	
-	if not success then
-		-- Final fallback to a known working version
-		success, OrionLib = pcall(function()
-			return loadstring(game:HttpGet("https://pastebin.com/raw/NMEHkVTb"))()
-		end)
-	end
 	
 	if not success then
 		info.Text = "Failed to load Orion. Using basic UI."
@@ -175,90 +161,125 @@ local function loadOrion()
 		return
 	end
 	
-	-- Create the window
+	-- Your Orion key system implementation
+	local player = game.Players.LocalPlayer.Name
 	local Window = OrionLib:MakeWindow({
-		Name = "Xeno Hub", 
+		Name = "Xeno Hub - Key System",
 		HidePremium = false, 
-		SaveConfig = true, 
+		SaveConfig = true,
 		ConfigFolder = "XenoHubConfig",
 		IntroEnabled = true,
 		IntroText = "Xeno Hub"
 	})
-	
-	-- Create tabs and elements
-	local MainTab = Window:MakeTab({
-		Name = "Main",
+
+	OrionLib:MakeNotification({
+		Name = "Key system!",
+		Content = "Please enter the correct key "..player.."!",
+		Image = "rbxassetid://4483345998",
+		Time = 5
+	})
+
+	_G.Key = "xenhub123" -- The correct key
+	_G.KeyInput = ""
+
+	local Tab = Window:MakeTab({
+		Name = "Key System",
 		Icon = "rbxassetid://4483345998",
 		PremiumOnly = false
 	})
-	
-	MainTab:AddLabel("Xeno Hub Loaded Successfully! ✅")
-	MainTab:AddParagraph("Welcome", "Thank you for using Xeno Hub with Orion UI")
-	
-	-- Add some example elements
-	MainTab:AddButton({
-		Name = "Example Button",
-		Callback = function()
-			OrionLib:MakeNotification({
-				Name = "Example",
-				Content = "This is an example notification!",
-				Image = "rbxassetid://4483345998",
-				Time = 5
-			})
-		end    
+
+	local Section = Tab:AddSection({
+		Name = "Please enter the key to access Xeno Hub!"
 	})
-	
-	MainTab:AddToggle({
-		Name = "Example Toggle",
-		Default = false,
-		Callback = function(Value)
-			print("Toggle value:", Value)
-		end    
-	})
-	
-	MainTab:AddSlider({
-		Name = "Example Slider",
-		Min = 0,
-		Max = 100,
-		Default = 50,
-		Color = Color3.fromRGB(180,120,255),
-		Increment = 1,
-		ValueName = "Value",
-		Callback = function(Value)
-			print("Slider value:", Value)
-		end    
-	})
-	
-	-- Create another tab
-	local SettingsTab = Window:MakeTab({
-		Name = "Settings",
-		Icon = "rbxassetid://4483345998",
-		PremiumOnly = false
-	})
-	
-	SettingsTab:AddLabel("Settings Panel")
-	SettingsTab:AddTextbox({
-		Name = "Example Textbox",
+
+	function myscript()
+		-- Main hub functionality after successful key entry
+		local MainWindow = OrionLib:MakeWindow({
+			Name = "Xeno Hub - Main",
+			HidePremium = false, 
+			SaveConfig = true,
+			ConfigFolder = "XenoHubConfig",
+			IntroText = "Xeno Hub - Main Features",
+			IntroIcon = "rbxassetid://136091781462514",
+		})
+		
+		local MainTab = MainWindow:MakeTab({
+			Name = "Main Features",
+			Icon = "rbxassetid://4483345998",
+			PremiumOnly = false
+		})
+		
+		MainTab:AddLabel("Xeno Hub Loaded Successfully! ✅")
+		MainTab:AddParagraph("Welcome", "Thank you for using Xeno Hub!")
+		
+		-- Add your hub features here
+		MainTab:AddButton({
+			Name = "Example Feature 1",
+			Callback = function()
+				OrionLib:MakeNotification({
+					Name = "Feature 1",
+					Content = "Feature 1 activated!",
+					Image = "rbxassetid://4483345998",
+					Time = 5
+				})
+			end    
+		})
+		
+		MainTab:AddToggle({
+			Name = "Example Toggle",
+			Default = false,
+			Callback = function(Value)
+				print("Toggle value:", Value)
+			end    
+		})
+		
+		-- Play music for 30 seconds
+		music:Play()
+		task.delay(30, function() 
+			music:Stop() 
+		end)
+	end
+
+	function makewhat()
+		print("Valid key!!")
+		OrionLib:MakeNotification({
+			Name = "Correct Key!",
+			Content = "You have entered the correct key "..player.."!",
+			Image = "rbxassetid://4483345998",
+			Time = 5
+		})
+		myscript()
+	end
+
+	function makewhat2()
+		warn("Invalid key!!")
+		OrionLib:MakeNotification({
+			Name = "Incorrect Key!",
+			Content = "You have entered an incorrect key "..player.."!",
+			Image = "rbxassetid://4483345998",
+			Time = 5
+		})
+	end
+
+	Tab:AddTextbox({
+		Name = "Enter Key",
 		Default = "",
 		TextDisappear = true,
 		Callback = function(Value)
-			print("Textbox value:", Value)
+			_G.KeyInput = Value
 		end	  
 	})
-	
-	SettingsTab:AddColorpicker({
-		Name = "Example Colorpicker",
-		Default = Color3.fromRGB(180, 120, 255),
-		Callback = function(Value)
-			print("Colorpicker value:", Value)
-		end	  
+
+	Tab:AddButton({
+		Name = "Submit Key",
+		Callback = function()
+			if _G.KeyInput == _G.Key then
+				makewhat()
+			else
+				makewhat2()
+			end
+		end
 	})
-	
-	-- Play music for 30 seconds
-	music:Play()
-	task.delay(30, function() 
-		music:Stop() 
-	end)
 	
 	-- Close the key GUI
 	gui:Destroy()
