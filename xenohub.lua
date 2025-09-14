@@ -4,7 +4,7 @@
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local UIS = game:GetService("UserInputService")
-local correctKey = "xenohub123"
+local correctKey = "xenhub123"
 local maxAttempts, attempts = 5, 0
 
 -- ScreenGui
@@ -116,15 +116,73 @@ end)
 local function loadOrion()
 	info.Text = "Loading Orion Hub..."
 	
-	-- Load Orion Library
-	local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Orion/main/source"))()
+	-- Load a working version of Orion Library
+	local success, OrionLib = pcall(function()
+		return loadstring(game:HttpGet("https://raw.githubusercontent.com/richie0866/orion/main/lib"))()
+	end)
+	
+	if not success then
+		-- Fallback to another working version
+		success, OrionLib = pcall(function()
+			return loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Orion/main/source"))()
+		end)
+	end
+	
+	if not success then
+		-- Final fallback to a known working version
+		success, OrionLib = pcall(function()
+			return loadstring(game:HttpGet("https://pastebin.com/raw/NMEHkVTb"))()
+		end)
+	end
+	
+	if not success then
+		info.Text = "Failed to load Orion. Using basic UI."
+		
+		-- Create a basic UI as fallback
+		local basicGui = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
+		basicGui.Name = "XenoHubUI"
+		
+		local mainFrame = Instance.new("Frame", basicGui)
+		mainFrame.Size = UDim2.new(0, 400, 0, 300)
+		mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+		mainFrame.BackgroundColor3 = Color3.fromRGB(25,25,35)
+		Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0,12)
+		
+		local title = Instance.new("TextLabel", mainFrame)
+		title.Size = UDim2.new(1, 0, 0.2, 0)
+		title.BackgroundTransparency = 1
+		title.Text = "Xeno Hub (Basic UI)"
+		title.TextColor3 = Color3.fromRGB(180,120,255)
+		title.Font = Enum.Font.GothamBold
+		title.TextScaled = true
+		
+		local status = Instance.new("TextLabel", mainFrame)
+		status.Size = UDim2.new(1, 0, 0.3, 0)
+		status.Position = UDim2.new(0, 0, 0.3, 0)
+		status.BackgroundTransparency = 1
+		status.Text = "Orion failed to load but Xeno Hub is working!"
+		status.TextColor3 = Color3.fromRGB(255,255,255)
+		status.Font = Enum.Font.Gotham
+		status.TextScaled = true
+		
+		-- Play music for 30 seconds
+		music:Play()
+		task.delay(30, function() 
+			music:Stop() 
+		end)
+		
+		gui:Destroy()
+		return
+	end
 	
 	-- Create the window
 	local Window = OrionLib:MakeWindow({
 		Name = "Xeno Hub", 
 		HidePremium = false, 
 		SaveConfig = true, 
-		ConfigFolder = "XenoHubConfig"
+		ConfigFolder = "XenoHubConfig",
+		IntroEnabled = true,
+		IntroText = "Xeno Hub"
 	})
 	
 	-- Create tabs and elements
