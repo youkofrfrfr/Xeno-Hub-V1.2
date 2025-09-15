@@ -14,9 +14,9 @@ music.Volume = 3
 music:Play()
 task.delay(30, function() music:Stop() end)
 
--- Load Orion Library
+-- Load Orion Library from the provided link
 local success, OrionLib = pcall(function()
-    return loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+    return loadstring(game:HttpGet("https://pastefy.app/N7SLEGxc/raw"))()
 end)
 
 if not success then
@@ -172,7 +172,9 @@ PlayerTab:AddSlider({
     Increment = 1,
     ValueName = "speed",
     Callback = function(Value)
-        LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed = Value
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+            LocalPlayer.Character.Humanoid.WalkSpeed = Value
+        end
     end    
 })
 
@@ -185,7 +187,41 @@ PlayerTab:AddSlider({
     Increment = 1,
     ValueName = "power",
     Callback = function(Value)
-        LocalPlayer.Character:WaitForChild("Humanoid").JumpPower = Value
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+            LocalPlayer.Character.Humanoid.JumpPower = Value
+        end
+    end    
+})
+
+-- Teleport Tab
+local TeleportTab = Window:MakeTab({
+    Name = "Teleport",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+TeleportTab:AddLabel("Teleport Locations")
+TeleportTab:AddButton({
+    Name = "Spawn",
+    Callback = function()
+        LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(0, 5, 0))
+    end    
+})
+
+-- Fun Tab
+local FunTab = Window:MakeTab({
+    Name = "Fun",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+FunTab:AddLabel("Fun Features")
+FunTab:AddButton({
+    Name = "Dance",
+    Callback = function()
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+            LocalPlayer.Character.Humanoid:LoadAnimation(Instance.new("Animation")):Play()
+        end
     end    
 })
 
